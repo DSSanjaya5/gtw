@@ -40,3 +40,4 @@ MANIFEST
 .idea/
 .DS_Store
 Thumbs.db
+*.db

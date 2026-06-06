@@ -8,10 +8,6 @@ class StartGameResponse(BaseModel):
     round: int
 
 
-class EndTurnRequest(BaseModel):
-    scores: dict[str, int]
-
-
 class EndTurnResponse(BaseModel):
     status: str
     word: str | None = None

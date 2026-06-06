@@ -38,6 +38,23 @@ async def start_game(
             detail=f"Maximum {MAX_PLAYERS} players are allowed",
         )
 
+    if room.status != "waiting":
+        raise HTTPException(
+            400,
+            "Game already started"
+        )
+
+    try:
+        room.status = "in_progress"
+        room.current_turn = 1
+
+        db.commit()
+        db.refresh(room)
+
+    except SQLAlchemyError:
+        db.rollback()
+        raise
+
     return {
         "word": get_random_word(),  # replace with generator
         "drawer_id": room.host_id,
@@ -49,7 +66,6 @@ async def start_game(
 @game_router.post("/game/{room_id}/end-turn")
 async def end_turn(
     room_id: str,
-    payload: EndTurnRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -63,19 +79,40 @@ async def end_turn(
             403,
             "Only host can end turn",
         )
+    
+    if room.status != "in_progress":
+        raise HTTPException(
+            400,
+            "Game has not started"
+        )
 
     total_turns = len(room.players) * room.turns
 
-    if payload.current_turn >= total_turns:
+    if room.current_turn >= total_turns:
+        try:
+            room.status = "finished"
+
+            db.commit()
+            db.refresh(room)
+
+        except Exception:
+            db.rollback()
+            raise
         return {
             "status": "game_over",
-            "results": payload.scores,
         }
+    
+    try:
+        room.current_turn += 1
+        db.commit()
+        db.refresh(room)
+    except Exception:
+        db.rollback()
+        raise
 
     return {
         "status": "next_turn",
         "word": get_random_word(),
-        "scores": payload.scores,
-        "next_turn": payload.current_turn + 1,
+        "next_turn": room.current_turn,
         "total_turns": total_turns,
     }

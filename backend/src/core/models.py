@@ -26,15 +26,9 @@ class User(Base):
 class Room(Base):
     __tablename__ = "rooms"
 
-    id: Mapped[str] = mapped_column(
-        String,
+    room_id: Mapped[str] = mapped_column(
+        String(6),
         primary_key=True,
-        default=lambda: str(uuid.uuid4()),
-    )
-
-    name: Mapped[str] = mapped_column(
-        String(100),
-        nullable=False,
     )
 
     host_id: Mapped[str] = mapped_column(
@@ -62,4 +56,15 @@ class Room(Base):
         DateTime,
         default=datetime.utcnow,
         nullable=False,
+    )
+
+    status: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+        default="waiting",
+    )
+
+    current_turn: Mapped[int] = mapped_column(
+        nullable=False,
+        default=0,
     )
