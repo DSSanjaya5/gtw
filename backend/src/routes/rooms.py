@@ -38,6 +38,7 @@ async def create_room(
             {
                 "id": current_user.id,
                 "name": current_user.name,
+                "score": 0,
             }
         ],
     )
@@ -80,12 +81,14 @@ async def join_room(
             {
                 "id": current_user.id,
                 "name": current_user.name,
+                "score": 0,
             }
         )
 
         room.players = players
         db.commit()
         db.refresh(room)
+
 
     return {
         "room_id": room.room_id,

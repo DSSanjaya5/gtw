@@ -68,3 +68,15 @@ class Room(Base):
         nullable=False,
         default=0,
     )
+
+    current_word: Mapped[str | None] = mapped_column(
+        String,
+        nullable=True,
+        default=None,
+    )
+
+    guessed_players: Mapped[list[str]] = mapped_column(
+        JSON,
+        default=list,
+        nullable=False,
+    )

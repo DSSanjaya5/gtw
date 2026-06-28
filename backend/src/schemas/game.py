@@ -1,14 +1,11 @@
 from pydantic import BaseModel
 
 
-class StartGameResponse(BaseModel):
+class GuessRequest(BaseModel):
+    guess: str
+    time_left: int | None = None
+
+
+
+class ChooseWordRequest(BaseModel):
     word: str
-    drawer_id: str
-    turn: int
-    round: int
-
-
-class EndTurnResponse(BaseModel):
-    status: str
-    word: str | None = None
-    results: dict[str, int] | None = None

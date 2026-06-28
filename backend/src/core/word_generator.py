@@ -35,3 +35,8 @@ WORDS = [
 
 def get_random_word() -> str:
     return random.choice(WORDS)
+
+
+def get_word_choices(n: int = 3) -> list[str]:
+    """Return n unique random words for the drawer to choose from."""
+    return random.sample(WORDS, min(n, len(WORDS)))
